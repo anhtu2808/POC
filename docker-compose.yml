@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: cv_postgres
+    environment:
+      POSTGRES_DB: cvdb
+      POSTGRES_USER: cvuser
+      POSTGRES_PASSWORD: cvpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  api:
+    build: .
+    container_name: cv_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - qdrant
+    env_file:
+      - .env
+
+volumes:
+  pgdata:
+  qdrant_data:
