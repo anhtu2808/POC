@@ -29,8 +29,8 @@ services:
     depends_on:
       - postgres
       - qdrant
-    env_file:
-      - .env
+#    env_file:
+#      - .env
 
 volumes:
   pgdata:

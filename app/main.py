@@ -1,45 +1,31 @@
-from fastapi import FastAPI, UploadFile, File, Depends
-from sqlalchemy.orm import Session
-from app.db import SessionLocal, engine
-from app.models import CVResult, Base
-from app.service import extract_text, score_cv
+from fastapi import FastAPI, UploadFile, File
+from pydantic import BaseModel
 
-Base.metadata.create_all(bind=engine)
+from app.service import save_cv_vector, search_best_cvs
+from app.vector_db import init_collection
+import pdfplumber
 
 app = FastAPI()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+@app.on_event("startup")
+def startup():
+    init_collection(384)  # dimension of MiniLM
+
+def extract_text(file):
+    with pdfplumber.open(file) as pdf:
+        return "".join(p.extract_text() or "" for p in pdf.pages)
+
+@app.post("/upload-cv")
+async def upload_cv(file: UploadFile = File(...)):
+    text = extract_text(file.file)
+    save_cv_vector(text, {"filename": file.filename})
+    return {"status": "ok"}
+
+class RankRequest(BaseModel):
+    jd: str
 
 @app.post("/rank")
-async def rank_cvs(jd: str, files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
-    results = []
-
-    for f in files:
-        text = extract_text(f.file)
-        score = score_cv(jd, text)
-
-        record = CVResult(
-            filename=f.filename,
-            score=score
-        )
-        db.add(record)
-        db.commit()
-
-        results.append({
-            "filename": f.filename,
-            "score": round(score, 2)
-        })
-
-    results.sort(key=lambda x: x["score"], reverse=True)
-
-    return {"ranking": results}
-
-
-@app.get("/results")
-def get_results(db: Session = Depends(get_db)):
-    return db.query(CVResult).order_by(CVResult.score.desc()).all()
+def rank_cvs(req: RankRequest):
+    return {
+        "results": search_best_cvs(req.jd)
+    }
