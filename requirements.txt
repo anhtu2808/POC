@@ -8,3 +8,6 @@ pdfplumber
 sentence-transformers
 numpy
 qdrant-client
+llama-cpp-python
+huggingface_hub
+json_repair

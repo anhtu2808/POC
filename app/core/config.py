@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     QDRANT_COLLECTION: str = "resume_embeddings"
     VECTOR_SIZE: int = 384  # all-MiniLM-L6-v2 dimension
 
+    # Local LLM
+    MODEL_PATH: str = "llm/models/Llama-3.2-1B-Instruct-Q4_K_M.gguf"
+    MAX_TOKENS: int = 2048
+
     class Config:
         env_file = ".env"
         case_sensitive = True

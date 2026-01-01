@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Parser & Ranker</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>AI Resume Workspace</h1>
+            <p>Upload resumes, parse structured data, and rank candidates with AI.</p>
+        </header>
+
+        <!-- 1. Upload Section -->
+        <section class="card upload-section">
+            <h2>Import Resumes</h2>
+            <div class="drop-zone" id="dropZone">
+                <div class="icon">📂</div>
+                <p>Drag & drop PDFs here or <span class="browse-link" id="browseBtn">browse</span></p>
+                <input type="file" id="fileInput" multiple accept="application/pdf" hidden>
+            </div>
+            <div class="file-list" id="fileList"></div>
+            <button id="uploadBtn" class="primary-btn" disabled>Upload Files</button>
+        </section>
+
+        <!-- 2. Action Bar -->
+        <div class="action-bar">
+            <button id="toggleRankBtn" class="secondary-btn">✨ Start Ranking</button>
+        </div>
+
+        <!-- 3. Ranking Workflow (Hidden by default) -->
+        <section id="rankingSection" class="card ranking-section hidden">
+            <div class="ranking-header">
+                <h2>Job Matcher</h2>
+                <button id="closeRankBtn" class="icon-btn">✕</button>
+            </div>
+            <div class="input-group">
+                <label for="jdInput">Paste Job Description</label>
+                <textarea id="jdInput" placeholder="Paste the job requirements here to rank candidates..."></textarea>
+            </div>
+            <button id="analyzeBtn" class="primary-btn" disabled>Analyze & Rank</button>
+
+            <div id="rankResults" class="rank-results hidden">
+                <h3>Ranking Results</h3>
+                <div id="resultsList" class="results-list"></div>
+            </div>
+        </section>
+
+        <!-- 4. Resume Repository (Main View) -->
+        <section class="card repository-section">
+            <h2>Resume Repository</h2>
+            <div class="table-container">
+                <table id="resumeTable">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Experience & Skills</th>
+                            <th>Uploaded</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resumeTableBody">
+                        <!-- Rows rendered via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
